@@ -1,0 +1,11 @@
+ARG DISTRO
+ARG VERSION
+FROM voxpupuli/$DISTRO:$VERSION
+
+ADD files/voxpupuli.repo /etc/yum.repos.d/voxpupuli.repo
+
+RUN yum clean all
+RUN yum update
+RUN yum install -y pl-gcc
+
+CMD ["/sbin/init"]

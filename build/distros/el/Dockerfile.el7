@@ -1,0 +1,24 @@
+FROM centos:7
+
+RUN yum update -y
+RUN yum install -y openssh-server git openssh-client curl which --nogpgcheck
+RUN yum install -y nano
+RUN yum groupinstall "Development Tools" -y --nogpgcheck
+RUN yum install -y autoconf automake createrepo rsync gcc make rpmdevtools rpm-libs yum-utils rpm-sign readline readline-devel zlib zlib-devel openssl-devel libyaml-devel libxml2-devel libxslt-devel glibc-devel ncurses-devel gnupg subversion
+RUN yum install -y rsyslog
+
+RUN systemctl enable rsyslog.service
+
+# install RVM, Ruby, and Bundler
+RUN \curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+RUN \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+RUN \curl -L https://get.rvm.io | bash -s stable
+RUN /bin/bash -l -c "rvm requirements"
+RUN /bin/bash -l -c "rvm install 2.5.5"
+RUN /bin/bash -l -c "gem install bundler --no-document"
+
+RUN mkdir -p /root/.ssh && \
+    curl -G https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub \
+      -o /root/.ssh/authorized_keys
+
+CMD ["/sbin/init"]

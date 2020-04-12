@@ -1,0 +1,19 @@
+FROM centos:8
+
+RUN dnf update -y
+RUN dnf install dnf-plugins-core -y
+RUN dnf config-manager --enable PowerTools
+RUN dnf install -y openssh-server git curl which --nogpgcheck
+RUN dnf install -y nano
+RUN dnf groupinstall "Development Tools" -y --nogpgcheck
+RUN dnf install -y autoconf automake createrepo rsync gcc make rpmdevtools rpm-libs dnf-utils rpm-sign readline readline-devel zlib zlib-devel openssl-devel libyaml-devel libxml2-devel libxslt-devel glibc-devel ncurses-devel gnupg subversion
+RUN dnf install -y rsyslog
+
+RUN systemctl enable rsyslog.service
+
+# install RVM, Ruby, and Bundler
+RUN mkdir -p /root/.ssh && \
+    curl -G https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub \
+      -o /root/.ssh/authorized_keys
+
+CMD ["/sbin/init"]

@@ -1,0 +1,28 @@
+FROM debian:buster
+
+RUN apt update && apt install -y ca-certificates apt-transport-https
+
+# basics
+RUN apt update
+RUN apt install -y openssh-server git openssh-client curl
+RUN apt install -y nano
+RUN apt install -y build-essential
+RUN apt install -y openssl libreadline7 libreadline-dev curl zlib1g zlib1g-dev libssl-dev libyaml-dev libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config gpg
+RUN apt install -y rsyslog init
+
+RUN systemctl enable rsyslog.service
+
+# install RVM, Ruby, and Bundler
+RUN \curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+RUN \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+RUN \curl -L https://get.rvm.io | bash -s stable
+RUN /bin/bash -l -c "rvm requirements"
+RUN /bin/bash -l -c "rvm install 2.5.5"
+RUN /bin/bash -l -c "gem install bundler --no-document"
+
+
+RUN mkdir -p /root/.ssh && \
+    curl -G https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub \
+      -o /root/.ssh/authorized_keys
+
+CMD ["/sbin/init"]

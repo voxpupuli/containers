@@ -1,0 +1,5 @@
+[voxpupuli]
+name=Vox Pupuli EL Repo
+baseurl=https://yum.fury.io/voxpupuli/
+enabled=1
+gpgcheck=0
